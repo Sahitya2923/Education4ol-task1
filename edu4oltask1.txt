@@ -1,0 +1,38 @@
+import smtplib, ssl
+
+class EmailClient:
+    def __init__(self, email, password, smtp_addr='smtp.gmail.com', port=465):
+        self.email = email
+        self._password = password
+        self._smtp_addr = smtp_addr
+        self._port = port
+        self._context = ssl.create_default_context()
+    
+
+    def send_mail(self, email, body, subject=''):
+        try:
+            with smtplib.SMTP_SSL(self._smtp_addr, self._port, context=self._context) as server:
+                server.ehlo()
+                server.login(self.email, self._password)
+
+                msg = f'Subject: {subject}\n\n{body}'
+
+                server.sendmail(self.email, [email], msg)
+        except Exception as e:
+            print(e)
+            raise e
+            print('Mail not sent')
+            return
+
+        print('Mail successfully sent...')
+
+
+email = 's6674830@gmail.com'
+app_password = 'zhnvqtxdnlkabskf'
+
+client = EmailClient(email, app_password)
+reciever_email = input('Enter Reciever email: ')
+subject = input('Enter subject: ')
+body = input('Enter body of the email: ')
+
+client.send_mail(reciever_email, body, subject)
